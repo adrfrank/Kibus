@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<!--<html manifest="kibus.appcache">-->
+<html >
+	<head>
+		<meta charset="UTF-8">
+		<meta name="description" content="El mundo de kibus, practica de Inteligencia Artificial">
+		<meta name="keywords" content="Kibus,IA">
+		<meta name="author" content="Adrian Gonzalez">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+		<title>Kibus</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link href="/style.css" rel="stylesheet" />
+		
+	</head>
+	<body>
+		<header>
+			<h1>El mundo de Kibus</h1>
+		</header>
+		<section id="container" >
+			<menu>
+				<div>
+					<label>Fase: </label>
+					<select id="Phase">
+						<option value="1">Fase 1</option>
+						<option value="2">Fase 2</option>
+						<option value="3">Fase 3</option>
+						<option value="4">Fase 4</option>
+					</select>
+				</div>
+				<div>
+					<label>Modificar mundo: </label>
+					<input type="radio" name="elem" value="obs" checked />
+					<img src="rock.png" dragable>
+					<input type="radio" name="elem" value="house" />
+					<img src="cave.png">
+					<input type="radio" name="elem" value="bg" />
+					<img src="bg0.png" dragable>
+					
+				</div>
+				<div>
+					<button type="button" id="btnReset" class="btn btn-default btn-sm" >
+					<span class="glyphicon glyphicon-retweet"></span>
+					Reset</button>
+				</div>
+			</menu>
+			<canvas width="800" height="608">
+					Tu navegador no soporta canvas!
+			</canvas>
+			
+			
+		</section>	
+		<footer>
+			<a href="mailto:adrfrank@outlook.com" rel="author">Adrian Gonzalez</a>
+		</footer>
+		<script src="/jquery-2.1.4.min.js"></script>
+		<script src="/kibus.js"></script>
+	</body>
+</html>

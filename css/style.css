@@ -1,0 +1,41 @@
+body{
+	background-color: #f3f3f3;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+body > section, body > header, body > footer{
+	width: 800px;
+	margin: 0 auto;
+}
+
+body > header{
+	text-align: center;
+}
+
+body > section {
+	boder: 1px solid black;
+	min-height: 400px;
+	display: block;
+}
+
+canvas{
+	border: 1px solid grey;
+	background-color: #fcfcfc;
+	border-radius: 3px;
+	box-shadow: 0px 0px 0px 2px #ddd;
+	width: 800px;
+	height: 608px;
+	margin: 0 auto;
+	display: block;
+
+}
+
+
+@media only screen and (max-width: 800px) {
+	body > section, body > header , body > footer{
+		width: 100%;
+	}
+	canvas{
+		width: 100%;
+	}
+}
