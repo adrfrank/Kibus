@@ -12,10 +12,24 @@ body > header{
 	text-align: center;
 }
 
+body > header h1{
+	text-align: center;
+	font-size: 20px;
+}
+
 body > section {
 	boder: 1px solid black;
 	min-height: 400px;
 	display: block;
+}
+
+body > section menu{
+	padding: 0;
+	margin: 0
+}
+
+body > section menu > div, menu select{
+	display: inline-block;
 }
 
 canvas{

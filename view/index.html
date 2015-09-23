@@ -1,26 +1,29 @@
 <!DOCTYPE HTML>
-<!--<html manifest="kibus.appcache">-->
-<html >
+<html manifest="kibus.appcache">
+<!-- <html > -->
 	<head>
 		<meta charset="UTF-8">
 		<meta name="description" content="El mundo de kibus, practica de Inteligencia Artificial">
 		<meta name="keywords" content="Kibus,IA">
 		<meta name="author" content="Adrian Gonzalez">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
-		<title>Kibus</title>
+		<title>El mundo de Kibus</title>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 		<link href="/style.css" rel="stylesheet" />
 		
 	</head>
 	<body>
-		<header>
+		<header class="hidden">
 			<h1>El mundo de Kibus</h1>
 		</header>
-		<section id="container" >
+		<section id="container" >			
+			<canvas>
+					Tu navegador no soporta canvas!
+			</canvas>
 			<menu>
 				<div>
 					<label>Fase: </label>
-					<select id="Phase">
+					<select id="Phase" disabled>
 						<option value="1">Fase 1</option>
 						<option value="2">Fase 2</option>
 						<option value="3">Fase 3</option>
@@ -34,19 +37,38 @@
 					<input type="radio" name="elem" value="house" />
 					<img src="cave.png">
 					<input type="radio" name="elem" value="bg" />
-					<img src="bg0.png" dragable>
-					
+					<img src="bg0.png" dragable>					
 				</div>
 				<div>
 					<button type="button" id="btnReset" class="btn btn-default btn-sm" >
-					<span class="glyphicon glyphicon-retweet"></span>
-					Reset</button>
+						<span class="glyphicon glyphicon-repeat"></span>
+						Limpiar
+					</button>
+					
+
+				</div>
+				<div>
+					<button type="button" id="btnHome"  class="btn btn-default btn-sm" >
+						<span class="glyphicon glyphicon-home"></span>
+						Regresar
+					</button>
+				</div>
+				<div >
+					<button type="button" id="btnObs" class="btn btn-default btn-sm" >
+							<span class="glyphicon glyphicon-random"></span>
+							Generar obst&aacute;culos <span id="txtPercObs">0%</span>
+					</button>
+				 	
+				</div>
+				<div>
+					<label for="PercObs">Obstaculos: </label>
+					<input id="PercObs" type="range"  min="0" max="100" value="0" step="5" />
+				</div>
+				<div>
+					<label for="Vel">Velocidad: </label>
+					<input id="Vel" type="range"  min="0" max="100" value="0" step="5" />
 				</div>
 			</menu>
-			<canvas width="800" height="608">
-					Tu navegador no soporta canvas!
-			</canvas>
-			
 			
 		</section>	
 		<footer>

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-#v0.1
+#v0.1.2
 CACHE:
 /bg0.png
 /bg1.png
@@ -21,6 +21,7 @@ CACHE:
 /pointer.png
 /rock.png
 /tiles.png
+/girl.png
 /style.css
 /jquery-2.1.4.min.js
 /kibus.js
