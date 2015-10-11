@@ -393,7 +393,12 @@ var kbw = {
 		return kbw.houseCoords.x === x && kbw.houseCoords.y === y;
 	},
 	generateObstacles: function(perc){
-		var n = parseInt(kbw.cols * kbw.rows * perc / 100);
+
+		var n = parseInt( perc / 100 * kbw.cols * kbw.rows );
+		console.log("Porcentaje: ",perc);
+		console.log("Total: ",  kbw.cols * kbw.rows);
+		console.log("Porcentaje",perc / 100);
+		console.log("Perc n",perc / 100 * kbw.cols * kbw.rows)
 		kbw.initObstacleMatrix();
 		kbw.loadBackground();
 
@@ -432,6 +437,32 @@ var kbw = {
 		if(kbw.obstacleMatrix[x][y] === true)
 			kbw.imageOn('rock',x,y);
 		//kbw.kibus.render();
+	},
+	saveMap: function(){
+		console.log({
+				rows: kbw.rows,
+				cols: kbw.cols,
+				obstacles: kbw.obstacleMatrix,
+				house: JSON.stringify(kbw.houseCoords),
+				kibus: {x: kbw.kibus.x, y: kbw.kibus.y}
+			});
+		$.ajax({
+			url:'/saveMap',
+			data: {
+				rows: kbw.rows,
+				cols: kbw.cols,
+				//obstacles: kbw.obstacleMatrix,
+				house: kbw.houseCoords,
+				kibus: {x: kbw.kibus.x, y: kbw.kibus.y}
+			},
+			type:'POST',
+			contenType: 'application/json'
+		}).done(function  (xhr) {
+			console.log(xhr);
+		}).error(function  (err) {
+			console.log("Error",err);
+		});
+
 	},
 };
 

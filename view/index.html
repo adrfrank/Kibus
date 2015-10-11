@@ -8,12 +8,13 @@
 		<meta name="author" content="Adrian Gonzalez">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
 		<title>El mundo de Kibus</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
+		<link rel="stylesheet" href="/bootstrap-3.3.5-dist/css/bootstrap.min.css">
 		<link href="/style.css" rel="stylesheet" />
 		
 	</head>
 	<body>
-		<header class="hidden">
+		<header >
 			<h1>El mundo de Kibus</h1>
 		</header>
 		<section id="container" >			
@@ -23,6 +24,7 @@
 			<menu>
 				<div>
 					<label>Fase: </label>
+					<br />
 					<select id="Phase" disabled>
 						<option value="1">Fase 1</option>
 						<option value="2">Fase 2</option>
@@ -32,6 +34,7 @@
 				</div>
 				<div>
 					<label>Modificar mundo: </label>
+					<br />
 					<input type="radio" name="elem" value="obs" checked />
 					<img src="rock.png" dragable>
 					<input type="radio" name="elem" value="house" />
@@ -40,36 +43,56 @@
 					<img src="bg0.png" dragable>					
 				</div>
 				<div>
-					<button type="button" id="btnReset" class="btn btn-default btn-sm" >
+					<button type="button" id="btnReset" class="btn btn-default btn-xs" >
 						<span class="glyphicon glyphicon-repeat"></span>
 						Limpiar
 					</button>
-					
-
 				</div>
 				<div>
-					<button type="button" id="btnHome"  class="btn btn-default btn-sm" >
+					<button type="button" id="btnHome"  class="btn btn-default btn-xs" >
 						<span class="glyphicon glyphicon-home"></span>
 						Regresar
 					</button>
 				</div>
 				<div >
-					<button type="button" id="btnObs" class="btn btn-default btn-sm" >
+					<button type="button" id="btnObs" class="btn btn-default btn-xs" >
 							<span class="glyphicon glyphicon-random"></span>
 							Generar obst&aacute;culos <span id="txtPercObs">0%</span>
 					</button>
 				 	
 				</div>
 				<div>
-					<label for="PercObs">Obstaculos: </label>
-					<input id="PercObs" type="range"  min="0" max="100" value="0" step="5" />
+					<label for="PercObs">Obst&aacute;culos: </label>
+					<input id="PercObs" type="range"  min="0" max="80" value="0" step="5" />
 				</div>
 				<div>
 					<label for="Vel">Velocidad: </label>
-					<input id="Vel" type="range"  min="0" max="100" value="0" step="5" />
+					<input id="Vel" type="range"  min="0" max="100" value="0" step="1" />
 				</div>
 			</menu>
-			
+			<div class="hidden">
+				<img src="bg0.png"/>
+				<img src="bg1.png"/>
+				<img src="bg2.png"/>
+				<img src="bg3.png"/>
+				<img src="bg4.png"/>
+				<img src="bg5.png"/>
+				<img src="cave.png"/>
+				<img src="girl.png"/>
+				<img src="House.png"/>
+				<img src="house1.png"/>
+				<img src="house2.png"/>
+				<img src="house3.png"/>
+				<img src="house4.png"/>
+				<img src="house5.png"/>
+				<img src="house6.png"/>
+				<img src="house7.png"/>
+				<img src="house8.png"/>
+				<img src="houseCenter.png"/>
+				<img src="houseCenterTop.png"/>
+				<img src="pointer.png"/>
+				<img src="rock.png"/>
+			</div>
 		</section>	
 		<footer>
 			<a href="mailto:adrfrank@outlook.com" rel="author">Adrian Gonzalez</a>

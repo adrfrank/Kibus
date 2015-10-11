@@ -28,6 +28,10 @@ body > section menu{
 	margin: 0
 }
 
+body > section menu label{
+	font-size: .8em;
+}
+
 body > section menu > div, menu select{
 	display: inline-block;
 }
