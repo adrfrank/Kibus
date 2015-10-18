@@ -8,6 +8,62 @@ function getMousePos(canvas, evt) {
 }
 
 
+function lineaBres(x0, y0, x1, y1){
+
+    var x, y, dx, dy,p, incE, incNE, stepx, stepy,cont=0;
+    linea = [];
+    dx = Math.abs(x1 - x0);
+    dy = Math.abs(y1 - y0);
+    /* determinar que punto usar para empezar, cual para terminar */
+    if ( y0 > y1) stepy = -1;
+    else stepy = 1;
+
+    if (x0 > x1) stepx = -1;
+    else stepx = 1;
+
+    x = x0;
+    y = y0;
+    ++cont;
+    linea.push({x:x,y:y});
+
+    /* se cicla hasta llegar al extremo de la línea */
+    if(dx>dy){
+        p = 2*dy - dx;
+        incE = 2*dy;
+        incNE = 2*(dy-dx);
+        while (x != x1){
+          x = x + stepx;
+          if (p < 0){
+            p = p + incE;
+          }
+          else {
+            y = y + stepy;
+            p = p + incNE;
+          }
+          ++cont;
+    	  linea.push({x:x,y:y});
+        }
+    }
+    else{
+        p = 2*dx - dy;
+        incE = 2*dx;
+        incNE = 2*(dx-dy);
+        while (y != y1){
+          y = y + stepy;
+          if (p < 0){
+            p = p + incE;
+          }
+          else {
+            x = x + stepx;
+            p = p + incNE;
+          }
+          ++cont;
+    	  linea.push({x:x,y:y});
+        }
+    }
+    return linea;
+  }
+
 function Sprite(options){
 	var that = $.extend({
 		width: 16,
@@ -123,9 +179,14 @@ var kbw = {
 	lastPointer: {x:0,y:0},
 	backgroundMatrix: [],
 	obstacleMatrix: [],
+	flags: {},
+	flagsForObstacle:10,
 	isDown: false,
 	kibus: null,
 	sleepTime: 1,
+	evaluateFlags: true,
+	keysEnabled: true,
+	moveKibusWithHouse: true,
 	testCtx: function(){
 		this.ctx.moveTo(0,0);
 		this.ctx.lineTo(200,100);
@@ -147,11 +208,10 @@ var kbw = {
 		    switch(tool){
 		    	case "house":
 		    		kbw.setHouse(x,y);
-		    		switch(kbw.phase){
-		    			case 1:
-		    				kbw.kibus.setCoord(x,y);
-		    				kbw.kibus.render();
-		    				break;
+		    		if(kbw.moveKibusWithHouse ===true)
+		    		{
+		    			kbw.kibus.setCoord(x,y);
+		    			kbw.kibus.render();
 		    		}
 		    		break;
 		    	case "bg":
@@ -159,6 +219,12 @@ var kbw = {
 		    		break;
 		    	case "obs":
 		    		kbw.setObstacle(x,y);
+		    		break;
+		    	case "kibus":
+		    		if(kbw.moveKibusWithHouse === true)
+		    			kbw.setHouse(x,y);
+		    		kbw.kibus.setCoord(x,y);
+		    		kbw.kibus.render();
 		    		break;
 		    }
 		    kbw.isDown = true;
@@ -175,27 +241,30 @@ var kbw = {
 		    var y= Math.floor( pos.y / kbw.squareBase );
 		    
 		    var tool = kbw.getToolSelected();
+		    if(kbw.isDown)
 		    switch(tool){
 		    	case "house":
-		    		if(kbw.isDown){
-		    			kbw.setHouse(x,y);
-		    			kbw.kibus.setCoord(x,y);
-		    		}
+		    		kbw.setHouse(x,y);
+	    			if(kbw.moveKibusWithHouse === true)
+	    				kbw.kibus.setCoord(x,y);
 		    		break;
 		    	case "bg":
-		    		if(kbw.isDown)
-		    			kbw.clearOn(x,y);
+		    		kbw.clearOn(x,y);		    			
 		    		break;
 		    	case "obs":
-		    		if(kbw.isDown)
-		    			kbw.setObstacle(x,y);
+		    		kbw.setObstacle(x,y);		    			
+		    		break;
+		    	case "kibus":
+		    		if(kbw.moveKibusWithHouse === true)
+		    			kbw.setHouse(x,y);
+		    		kbw.kibus.setCoord(x,y);		    		
 		    		break;
 
 		    }
 		    kbw.showPointer(x,y);
 		});
 		this.$container.find("#btnReset").off("click").on("click",function  (e) {
-			kbw.init();
+			kbw.initPhase();
 		});
 		this.$container.find("#btnObs").off("click").on("click",function  (e) {
 			kbw.generateObstacles(parseInt(kbw.$container.find("#PercObs").val()));
@@ -211,11 +280,11 @@ var kbw = {
 			kbw.sleepTime =  parseInt($(e.target).val());
 		})
 		$(document).off("keydown").on("keydown",function  (e) {
-			console.log(e.keyCode);
-			console.log(e);
+			if(kbw.keysEnabled===false) return true	;
+			//console.log(e.keyCode);
+			//console.log(e);
 			switch(e.keyCode){
 				case 37:
-
 					kbw.kibus.moveLeft();
 					break;
 				case 38:
@@ -241,6 +310,10 @@ var kbw = {
 		this.$canvas.css("height", this.squareBase * this.rows);
 		this.$canvas.css("width", this.squareBase * this.cols);
 		this.loadAssets();
+		this.initPhase();
+		this.bindings();
+	},
+	initPhase: function(){
 		this.kibus = new Sprite({
 			image: kbw.assets['girl'], 
 			context: this.ctx, 
@@ -249,16 +322,29 @@ var kbw = {
 			repaint: kbw.repaint,
 			parent: kbw
 		});
+		this.flags = {};
 		this.loadBackground();
 		this.initObstacleMatrix();
-		this.drawHouse();
-		
+		this.drawHouse();		
 		this.kibus.render();
-		this.bindings();
+
 	},
 	changePhase: function(phase){
 		console.log("Phase changed: "+phase);
-		kbw.phase = phase;		
+		kbw.phase = parseInt(phase);
+		kbw.keysEnabled = false;
+		kbw.moveKibusWithHouse = false;
+		kbw.evaluateFlags = true;
+		switch(kbw.phase){
+			case 1:
+				kbw.keysEnabled = true;
+				kbw.moveKibusWithHouse = true;
+				kbw.evaluateFlags = false;
+				break;
+			case 2: 
+
+				break;
+		}		
 	},
 	getToolSelected: function  (e) {
 		return kbw.$container.find("input[name=elem]:checked").val();
@@ -330,16 +416,68 @@ var kbw = {
 			);
 	},
 	getBack: function  () {
+		switch(kbw.phase){
+			case 1:
+				kbw.getBackPhase1();
+				break;
+			case 2: 
+				kbw.getBackPhase2();
+				break;
+		}
+	},
+	getBackPhase1:function(){
 		if(kbw.kibusInHome()){
 			kbw.movements=[];
 			return;
 		}else if(kbw.kibus.movements.length > 0){
 			kbw.kibus.undoMove();
-			setTimeout(kbw.getBack,kbw.sleepTime);
+			setTimeout(kbw.getBackPhase1,kbw.sleepTime);
 		}
+	},	
+	getBackPhase2: function(){
+		var line = lineaBres(kbw.kibus.x, kbw.kibus.y, kbw.houseCoords.x, kbw.houseCoords.y);
+		console.log("line:",line);
+		if(kbw.kibusInHome()){
+			kbw.movements=[];
+			return;
+		}else if(kbw.kibus.movements.length > 0){
+			var nextm = kbw.kibus.movements[0];
+			kbw.kibus.movements.splice(0,1);
+			if(kbw.obstacleOnCoord(nextm.x,nextm.y)){
+				if(!kbw.flags[kbw.kibus.x+","+kbw.kibus.y])
+					kbw.flags[kbw.kibus.x+","+kbw.kibus.y]=0;
+				kbw.flags[kbw.kibus.x+","+kbw.kibus.y]++;
+				
+				debugger;
+				var rmove = {};
+				do{
+					rmove = kbw.randomMove();
+				}while(kbw.obstacleOnCoord(rmove.x,rmove.y));
+				//TODO:evaluate rmove
+				kbw.kibus.setCoord(rmove.x,rmove.y);
+				kbw.kibus.render();
+				kbw.kibus.movements = lineaBres(kbw.kibus.x, kbw.kibus.y, kbw.houseCoords.x, kbw.houseCoords.y);
+
+			}else{
+				kbw.kibus.setCoord(nextm.x, nextm.y);
+				kbw.kibus.render();
+			}
+			
+			setTimeout(kbw.getBackPhase2,kbw.sleepTime);
+		}else{ //calculate next movements
+			kbw.kibus.movements = lineaBres(kbw.kibus.x, kbw.kibus.y, kbw.houseCoords.x, kbw.houseCoords.y);
+			setTimeout(kbw.getBackPhase2,kbw.sleepTime);
+		}
+
 	},
 	kibusInHome: function  () {
 		return kbw.houseOnCoord(kbw.kibus.x,kbw.kibus.y);
+	},
+	randomMove:function(){
+		return {
+			x: Math.min(kbw.cols-1, Math.max(0,kbw.kibus.x + Math.floor(Math.random()*3)-1)),
+			y: Math.min(kbw.rows-1, Math.max(0,kbw.kibus.y + Math.floor(Math.random()*3)-1))
+		}
 	},
 	setHouse: function(x,y){
 		kbw.clearHouse();
@@ -387,7 +525,7 @@ var kbw = {
 		kbw.imageOn('rock',x,y);
 	},
 	obstacleOnCoord: function(x,y){
-		return kbw.obstacleMatrix[x][y] === true;
+		return kbw.obstacleMatrix[x][y] === true || (kbw.evaluateFlags && kbw.flags[x+","+y] >= kbw.flagsForObstacle);
 	},
 	houseOnCoord: function(x,y){
 		return kbw.houseCoords.x === x && kbw.houseCoords.y === y;
@@ -436,25 +574,26 @@ var kbw = {
 		kbw.drawHouse();
 		if(kbw.obstacleMatrix[x][y] === true)
 			kbw.imageOn('rock',x,y);
+		if(kbw.flags[x+","+y] >= kbw.flagsForObstacle)
+			kbw.imageOn('pointer',x,y);
 		//kbw.kibus.render();
 	},
 	saveMap: function(){
-		console.log({
+		
+		var d = {
 				rows: kbw.rows,
 				cols: kbw.cols,
-				obstacles: kbw.obstacleMatrix,
-				house: JSON.stringify(kbw.houseCoords),
-				kibus: {x: kbw.kibus.x, y: kbw.kibus.y}
-			});
+				obstacles:JSON.stringify(kbw.obstacleMatrix),
+				house: kbw.houseCoords,
+				kibus: {x: kbw.kibus.x, y: kbw.kibus.y},
+				name: prompt("Nombre del mapa")
+			};
+
+		
+		console.log(d);
 		$.ajax({
 			url:'/saveMap',
-			data: {
-				rows: kbw.rows,
-				cols: kbw.cols,
-				//obstacles: kbw.obstacleMatrix,
-				house: kbw.houseCoords,
-				kibus: {x: kbw.kibus.x, y: kbw.kibus.y}
-			},
+			data: d,
 			type:'POST',
 			contenType: 'application/json'
 		}).done(function  (xhr) {

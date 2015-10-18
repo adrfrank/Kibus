@@ -22,6 +22,10 @@ CACHE:
 /rock.png
 /tiles.png
 /girl.png
+/kibus.png
+/cave.png
 /style.css
+/bootstrap-3.3.5-dist/css/bootstrap.min.css
+/bootstrap-3.3.5-dist/fonts/glyphicons-halflings-regular.woff2
 /jquery-2.1.4.min.js
 /kibus.js
