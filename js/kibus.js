@@ -159,6 +159,7 @@ function Sprite(options){
     	that.clearActual();
     	that.x = x;
     	that.y = y;
+    	that.lastPos = {x:x,y:y};
     }
 	return that;
 };
@@ -488,10 +489,13 @@ var kbw = {
 						}
 					}
 					rmove = rbest;
-				}else
+				}else{
+					var contLastCoord=0;
 					do{
 						rmove = kbw.randomMove();
+						if(kbw.kibus.lastPos.x == rmove.x && kbw.kibus.lastPos.y == rmove.y && contLastCoord++ < 1)continue;
 					}while(kbw.obstacleOnCoord(rmove.x,rmove.y));
+				}
 				kbw.kibus.setCoord(rmove.x,rmove.y);
 				kbw.kibus.render();
 				kbw.kibus.movements = lineaBres(kbw.kibus.x, kbw.kibus.y, kbw.houseCoords.x, kbw.houseCoords.y);
