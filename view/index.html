@@ -25,7 +25,7 @@
 				<div>
 					<label>Fase: </label>
 					<br />
-					<select id="Phase" >
+					<select id="Phase" class="form-control">
 						<option value="2">Fase 2</option>
 						<option value="1">Fase 1</option>
 							<!-- <option value="3">Fase 3</option>
@@ -34,9 +34,9 @@
 					</div>
 					
 					<div>
-						<div class="btn-group" data-toggle="buttons">
+						<div class="btn-group btn-xs" data-toggle="buttons">
 							<label class="btn btn-primary">
-							<input type="radio" name="elem" value="obs" id="option1" autocomplete="off" /> <img src="rock.png" dragable />
+								<input type="radio" name="elem" value="obs" id="option1" autocomplete="off" /> <img src="rock.png" dragable />
 							</label>
 							<label class="btn btn-primary active">
 								<input type="radio" name="elem" value="house" id="option2" autocomplete="off" checked /> <img src="cave.png" />
@@ -49,45 +49,44 @@
 							</label>
 						</div>
 					</div>
-					<div>
-						<button type="button" id="btnReset" class="btn btn-default btn-xs" >
-							<span class="glyphicon glyphicon-repeat"></span>
-							Limpiar
-						</button>
-					</div>
-					<div>
-						<button type="button" id="btnHome"  class="btn btn-default btn-xs" >
+					<div class="btn-group">
+						<button type="button" id="btnHome"  class="btn btn-primary" >
 							<span class="glyphicon glyphicon-home"></span>
 							Regresar
 						</button>
-						<button type="button" id="btnPause"  class="btn btn-default btn-xs" >
+						<button id="btn-save-map" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
+						<button id="btn-load-map" type="button" class="btn btn-primary" data-toggle="modal" data-target="#maps-modal">
+							<span class="glyphicon glyphicon-download-alt"></span>
+							Mapas
+						</button>
+						
+						<button type="button" id="btnReset" class="btn btn-primary" >
+							<span class="glyphicon glyphicon-repeat"></span>
+							Limpiar
+						</button>
+						<!-- <button type="button" id="btnPause"  class="btn btn-default" >
 							<span class="glyphicon glyphicon-play">/</span><span class="glyphicon glyphicon-pause"></span>
 						</button>
-						<button type="button" id="btnStep"  class="btn btn-default btn-xs" >
+						<button type="button" id="btnStep"  class="btn btn-default" >
 							<span class="glyphicon glyphicon-step-forward"></span>
-						</button>
-					</div>
-					<div >
-						<button type="button" id="btnObs" class="btn btn-default btn-xs" >
+						</button> -->
+
+						<button type="button" id="btnObs" class="btn btn-primary" >
 							<span class="glyphicon glyphicon-random"></span>
-							Generar obst&aacute;culos <span id="txtPercObs">0%</span>
+							<span id="txtPercObs">0%</span>
 						</button>
 
 					</div>
 					<div>
 						<label for="PercObs">Obst&aacute;culos: </label>
-						<input id="PercObs" type="range"  min="0" max="80" value="0" step="5" />
+						<input id="PercObs" type="range"  min="0" max="80" value="0" step="5" class="form-control" />
 					</div>
 					<div>
-						<label for="Vel">Velocidad: </label>
-						<input id="Vel" type="range"  min="0" max="100" value="0" step="1" />
+						<label for="Vel">Duraci&oacute;n paso: </label>
+						<input id="Vel" type="range"  min="0" max="100" value="0" step="1" class="form-control" />
 					</div>
-					<div>
-						<button id="btn-load-map" type="button" class="btn btn-primary" data-toggle="modal" data-target="#maps-modal">
-						<span class="glyphicon glyphicon-download-alt"></span>
-							Mapas
-						</button>
-						<button id="btn-save-map" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
+					<div class="btn-group">
+						
 					</div>
 				</menu>
 				<div class="hidden">
@@ -152,13 +151,13 @@
 				<a href="mailto:adrfrank@outlook.com" rel="author">Adrian Gonzalez</a>
 			</footer>
 			<script id="map-tpl" type="text/template">
-			<tr>
-				<td class="map-name">Nuevo</td>
-				<td>
-					<button class="btn btn-primary btn-xs btn-load"><span class="glyphicon glyphicon-download-alt"></span></button>
-					<button class="btn btn-primary btn-xs btn-delete"><span class="glyphicon glyphicon-trash"></span></button>
-				</td>
-			</tr>
+				<tr>
+					<td class="map-name">Nuevo</td>
+					<td>
+						<button class="btn btn-primary btn-xs btn-load"><span class="glyphicon glyphicon-download-alt"></span></button>
+						<button class="btn btn-primary btn-xs btn-delete"><span class="glyphicon glyphicon-trash"></span></button>
+					</td>
+				</tr>
 			</script>
 			<script src="/jquery-2.1.4.min.js"></script>
 			<script src="/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>

@@ -343,6 +343,7 @@ var kbw = {
 	changePhase: function(phase){
 		console.log("Phase changed: "+phase);
 		kbw.phase = parseInt(phase);
+		kbw.initPhase();
 		kbw.keysEnabled = false;
 		kbw.moveKibusWithHouse = false;
 		kbw.evaluateFlags = true;
@@ -688,7 +689,7 @@ var kbw = {
 			kbw.setHouse(parseInt(map.house.x), parseInt(map.house.y));
 			kbw.kibus.setCoord(parseInt(map.kibus.x), parseInt( map.kibus.y));
 			kbw.kibus.render();			
-			
+			$("#maps-modal").modal("hide");
 			
 			
 		}).error(function  (err) {
