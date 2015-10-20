@@ -27,6 +27,11 @@ app.get('/',function(req,res){
 
 app.all('/saveMap',maps.saveMap);
 
+app.all('/loadMap/:name',maps.loadMap);
+
+app.all('/maps',maps.listMaps);
+app.all('/deleteMap/:name',maps.deleteMap);
+
 app.listen(process.env.PORT || 3000);
 
 console.log('Server running at http://127.0.0.1:3000/');

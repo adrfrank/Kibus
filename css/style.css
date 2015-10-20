@@ -48,6 +48,10 @@ canvas{
 
 }
 
+.btn-group img{
+	height: 20px;
+}
+
 
 @media only screen and (max-width: 800px) {
 	body > section, body > header , body > footer{
