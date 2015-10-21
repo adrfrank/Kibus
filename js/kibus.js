@@ -474,28 +474,15 @@ var kbw = {
 				if(kbw.isSurroundedByObstacles()){
 					//alert("paso algo malo");
 					kbw.setFlag(1000); // this place is very bad
-					kbw.flagsForObstacle++; // second chance for all
+					//kbw.flagsForObstacle++; // second chance for all
 					//get best coord
-					var rbest = null, fbest=Infinity;
-					for(var i=0; i <9; ++i){
-						if(auxdx[i] != 0 || auxdy[i] != 0){
-							var c = { 	x:kbw.kibus.x + auxdx[i],
-										y:kbw.kibus.y + auxdy[i], }
-							c.x = Math.min(kbw.cols,Math.max(c.x,0));
-							c.y = Math.min(kbw.rows,Math.max(c.y,0));
-							if(!kbw.obstacleMatrix[c.x][c.y] && kbw.flagsOnCoord(c.x,c.y)<fbest){
-								fbest = kbw.flagsOnCoord(c.x,c.y);
-								rbest = c;
-							}
-						}
-					}
-					rmove = rbest;
+					rmove = kbw.getRandomBest();
 				}else{
 					var contLastCoord=0;
-					do{
-						rmove = kbw.randomMove();
-						if(kbw.kibus.lastPos.x == rmove.x && kbw.kibus.lastPos.y == rmove.y && contLastCoord++ < 1)continue;
-					}while(kbw.obstacleOnCoord(rmove.x,rmove.y));
+					do{						
+						rmove =  kbw.getRandomBest();
+						if(kbw.kibus.lastPos.x == rmove.x && kbw.kibus.lastPos.y == rmove.y && contLastCoord++ < 10)continue;
+					}while(!kbw.isSurroundedByObstacles() && kbw.obstacleOnCoord(rmove.x,rmove.y));
 				}
 				kbw.kibus.setCoord(rmove.x,rmove.y);
 				kbw.kibus.render();
@@ -508,6 +495,24 @@ var kbw = {
 			kbw.kibus.movements = lineaBres(kbw.kibus.x, kbw.kibus.y, kbw.houseCoords.x, kbw.houseCoords.y);
 			
 		}
+	},
+	getRandomBest:function(){
+		var rbest = null, fbest=Infinity;
+		for(var i=0; i <9; ++i){
+			if(auxdx[i] != 0 || auxdy[i] != 0){
+				var c = { 	x:kbw.kibus.x + auxdx[i],
+							y:kbw.kibus.y + auxdy[i], }
+				c.x = Math.min(kbw.cols-1,Math.max(c.x,0));
+				c.y = Math.min(kbw.rows-1,Math.max(c.y,0));
+				if(!kbw.obstacleMatrix[c.x][c.y] && kbw.flagsOnCoord(c.x,c.y)<fbest){
+					fbest = kbw.flagsOnCoord(c.x,c.y);
+					rbest = [c];
+				}else if(!kbw.obstacleMatrix[c.x][c.y] && kbw.flagsOnCoord(c.x,c.y) == fbest){
+					rbest.push(c);
+				}
+			}
+		}
+		return rbest[parseInt(Math.random()*rbest.length)];
 	},
 	pausePhase: function(){
 		if(kbw.pause){
@@ -579,14 +584,14 @@ var kbw = {
 		}
 	},
 	setObstacle: function function_name (x,y) {
+		if(x<0||x>kbw.cols||y<0||y>kbw.rows) return;
 		kbw.obstacleMatrix[x][y] = true;
 		if(kbw.houseCoords.x == x && kbw.houseCoords.y == y )
 			kbw.setHouse(-2,-2);
 		kbw.imageOn('rock',x,y);
 	},
 	obstacleOnCoord: function(x,y){
-		x = Math.min(kbw.cols,Math.max(0,x));
-		y = Math.min(kbw.rows,Math.max(0,y));
+		if(x<0||x>=kbw.cols||y<0||y>=kbw.rows) return true;
 		return kbw.obstacleMatrix[x][y] == true || (kbw.evaluateFlags && kbw.flags[x+","+y] >= kbw.flagsForObstacle);
 	},
 	flagsOnCoord: function(x,y){
@@ -621,6 +626,7 @@ var kbw = {
 		kbw.kibus.render();
 	},
 	clearOn: function  (x,y) {
+		if(x<0||x>kbw.cols||y<0||y>kbw.rows) return;
 		kbw.obstacleMatrix[x][y] = false;
 		if(kbw.houseCoords.x == x && kbw.houseCoords.y == y )
 			kbw.setHouse(-2,-2);
