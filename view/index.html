@@ -32,42 +32,27 @@
 							<option value="4">Fase 4</option> -->
 						</select>
 					</div>
-					
-					<div>
-						<div class="btn-group btn-xs" data-toggle="buttons">
-							<label class="btn btn-primary">
-								<input type="radio" name="elem" value="obs" id="option1" autocomplete="off" /> <img src="rock.png" dragable />
-							</label>
-							<label class="btn btn-primary active">
-								<input type="radio" name="elem" value="house" id="option2" autocomplete="off" checked /> <img src="cave.png" />
-							</label>
-							<label class="btn btn-primary">
-								<input type="radio" name="elem" value="bg" id="option3" autocomplete="off" /> <img src="bg0.png" dragable>
-							</label>
-							<label class="btn btn-primary">
-								<input type="radio" name="elem" value="kibus" id="option4" autocomplete="off" /> <img src="kibus.png" dragable>
-							</label>
-						</div>
-					</div>
+				</div>
+				<div>
+					<label>General: </label><br />
 					<div class="btn-group">
 						<button type="button" id="btnHome"  class="btn btn-primary" >
-							<span class="glyphicon glyphicon-home"></span>
-							Regresar
+							<span class="glyphicon glyphicon-play"></span>
+						</button>
+						<button type="button" id="btnPause"  class="btn btn-primary" >
+							<span class="glyphicon glyphicon-pause"></span>
 						</button>
 						<button id="btn-save-map" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
 						<button id="btn-load-map" type="button" class="btn btn-primary" data-toggle="modal" data-target="#maps-modal">
 							<span class="glyphicon glyphicon-download-alt"></span>
 							Mapas
-						</button>
-						
+						</button>						
 						<button type="button" id="btnReset" class="btn btn-primary" >
 							<span class="glyphicon glyphicon-repeat"></span>
 							Limpiar
 						</button>
-						<!-- <button type="button" id="btnPause"  class="btn btn-default" >
-							<span class="glyphicon glyphicon-play">/</span><span class="glyphicon glyphicon-pause"></span>
-						</button>
-						<button type="button" id="btnStep"  class="btn btn-default" >
+
+						<!-- <button type="button" id="btnStep"  class="btn btn-default" >
 							<span class="glyphicon glyphicon-step-forward"></span>
 						</button> -->
 
@@ -77,90 +62,106 @@
 						</button>
 
 					</div>
-					<div>
-						<label for="PercObs">Obst&aacute;culos: </label>
-						<input id="PercObs" type="range"  min="0" max="80" value="0" step="5" class="form-control" />
-					</div>
-					<div>
-						<label for="Vel">Duraci&oacute;n paso: </label>
-						<input id="Vel" type="range"  min="0" max="100" value="0" step="1" class="form-control" />
-					</div>
-					<div class="btn-group">
-						
-					</div>
-				</menu>
-				<div class="hidden">
-					<img src="bg0.png"/>
-					<img src="bg1.png"/>
-					<img src="bg2.png"/>
-					<img src="bg3.png"/>
-					<img src="bg4.png"/>
-					<img src="bg5.png"/>
-					<img src="cave.png"/>
-					<img src="girl.png"/>
-					<img src="House.png"/>
-					<img src="house1.png"/>
-					<img src="house2.png"/>
-					<img src="house3.png"/>
-					<img src="house4.png"/>
-					<img src="house5.png"/>
-					<img src="house6.png"/>
-					<img src="house7.png"/>
-					<img src="house8.png"/>
-					<img src="houseCenter.png"/>
-					<img src="houseCenterTop.png"/>
-					<img src="pointer.png"/>
-					<img src="rock.png"/>
 				</div>
-				<div class="modal fade" id="maps-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-								<h4 class="modal-title" id="myModalLabel">Mapas cargados</h4>
-							</div>
-							<div class="modal-body">
-								<table id="tbl-maps" class="table table-striped">
-									<thead>
-										<tr>
-											<th>Mapa</th>
-											<th></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td class="map-name">Nuevo</td>
-											<td>
-												<button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-download-alt"></span></button>
-												<button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
-											</td>
+				<div>
+					<label>Edicion: </label>
+					<br />
+					<div class="btn-group btn-xs btn-tools" data-toggle="buttons">
+						<label class="btn btn-primary">
+							<input type="radio" name="elem" value="obs" id="option1" autocomplete="off" /> <img src="rock.png" dragable />
+						</label>
+						<label class="btn btn-primary active">
+							<input type="radio" name="elem" value="house" id="option2" autocomplete="off" checked /> <img src="cave.png" />
+						</label>
+						<label class="btn btn-primary">
+							<input type="radio" name="elem" value="bg" id="option3" autocomplete="off" /> <img src="bg0.png" dragable>
+						</label>
+						<label class="btn btn-primary">
+							<input type="radio" name="elem" value="kibus" id="option4" autocomplete="off" /> <img src="kibus.png" dragable>
+						</label>
+					</div>
+				</div>
+				<div>
+					<label for="PercObs">Obst&aacute;culos: </label>
+					<input id="PercObs" type="range"  min="0" max="80" value="0" step="5" class="form-control" />
+				</div>
+				<div>
+					<label for="Vel">Tiempo de espera: </label>
+					<input id="Vel" type="range"  min="0" max="100" value="0" step="1" class="form-control" />
+				</div>
+			</menu>
+			<div class="hidden">
+				<img src="bg0.png"/>
+				<img src="bg1.png"/>
+				<img src="bg2.png"/>
+				<img src="bg3.png"/>
+				<img src="bg4.png"/>
+				<img src="bg5.png"/>
+				<img src="cave.png"/>
+				<img src="girl.png"/>
+				<img src="House.png"/>
+				<img src="house1.png"/>
+				<img src="house2.png"/>
+				<img src="house3.png"/>
+				<img src="house4.png"/>
+				<img src="house5.png"/>
+				<img src="house6.png"/>
+				<img src="house7.png"/>
+				<img src="house8.png"/>
+				<img src="houseCenter.png"/>
+				<img src="houseCenterTop.png"/>
+				<img src="pointer.png"/>
+				<img src="rock.png"/>
+			</div>
+			<div class="modal fade" id="maps-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel">Mapas cargados</h4>
+						</div>
+						<div class="modal-body">
+							<table id="tbl-maps" class="table table-striped">
+								<thead>
+									<tr>
+										<th>Mapa</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="map-name">Nuevo</td>
+										<td>
+											<button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-download-alt"></span></button>
+											<button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
+										</td>
 
-										</tr>
-									</tbody>
-								</table>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-								<button type="button" class="btn btn-primary">Cargar mapa</button>
-							</div>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							<button type="button" class="btn btn-primary">Cargar mapa</button>
 						</div>
 					</div>
 				</div>
-			</section>	
-			<footer>
-				<a href="mailto:adrfrank@outlook.com" rel="author">Adrian Gonzalez</a>
-			</footer>
-			<script id="map-tpl" type="text/template">
-				<tr>
-					<td class="map-name">Nuevo</td>
-					<td>
-						<button class="btn btn-primary btn-xs btn-load"><span class="glyphicon glyphicon-download-alt"></span></button>
-						<button class="btn btn-primary btn-xs btn-delete"><span class="glyphicon glyphicon-trash"></span></button>
-					</td>
-				</tr>
-			</script>
-			<script src="/jquery-2.1.4.min.js"></script>
-			<script src="/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
-			<script src="/kibus.js"></script>
-		</body>
-		</html>
+			</div>
+		</section>	
+		<footer>
+			<a href="mailto:adrfrank@outlook.com" rel="author">Adrian Gonzalez</a>
+		</footer>
+		<script id="map-tpl" type="text/template">
+			<tr>
+				<td class="map-name">Nuevo</td>
+				<td>
+					<button class="btn btn-primary btn-load"><span class="glyphicon glyphicon-download-alt"></span></button>
+					<button class="btn btn-primary btn-delete"><span class="glyphicon glyphicon-trash"></span></button>
+				</td>
+			</tr>
+		</script>
+		<script src="/jquery-2.1.4.min.js"></script>
+		<script src="/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+		<script src="/kibus.js"></script>
+	</body>
+	</html>

@@ -189,19 +189,19 @@ var kbw = {
 	evaluateFlags: true,
 	keysEnabled: false,
 	moveKibusWithHouse: false,
+	pause :true,
 	testCtx: function(){
 		this.ctx.moveTo(0,0);
 		this.ctx.lineTo(200,100);
 		this.ctx.stroke();
 	},
-
-
 	bindings: function(){
 		this.$container.find("#Phase").on("change",function  (evt) {
 			var ctrl = $(evt.target);
 			kbw.changePhase(ctrl.val())
 		});
 		this.$canvas.off('mousedown').on('mousedown', function(e){
+			if(!kbw.pause)return;
 		    var pos = getMousePos(kbw.$canvas[0], e);
 		    var x= Math.floor( pos.x / kbw.squareBase );
 		    var y= Math.floor( pos.y / kbw.squareBase );
@@ -232,12 +232,14 @@ var kbw = {
 		    kbw.isDown = true;
 		});
 		this.$canvas.off('mouseup').on('mouseup',function  (e) {
+			if(!kbw.pause)return;
 			var pos = getMousePos(kbw.$canvas[0], e);
 		    var x= Math.floor( pos.x / kbw.squareBase );
 		    var y= Math.floor( pos.y / kbw.squareBase );
 		    kbw.isDown = false;
 		})
 		this.$canvas.off('mousemove').on('mousemove', function(e){
+			if(!kbw.pause)return;
 		    var pos = getMousePos(kbw.$canvas[0], e);
 		    var x= Math.floor( pos.x / kbw.squareBase );
 		    var y= Math.floor( pos.y / kbw.squareBase );
@@ -338,7 +340,26 @@ var kbw = {
 		this.initObstacleMatrix();
 		this.drawHouse();		
 		this.kibus.render();
-
+		kbw.enableDisableControls();
+	},
+	enableDisableControls: function(){
+		var ctrls = $("#Phase")
+			.add($(".btn-tools .btn"))
+			.add($("#btn-save-map"))
+			.add($("#btnHome"))
+			.add($("#PercObs"))
+			.add($("#btn-load-map"))
+			.add($("#btnObs"))
+			.add($("#btnReset"))
+		var other = $("#btnPause")
+		if(!kbw.pause){
+			ctrls.prop("disabled",true).addClass("disabled");
+			other.prop("disabled",false).removeClass("disabled");
+		}else
+		{
+			ctrls.prop("disabled",false).removeClass("disabled");
+			other.prop("disabled",true).addClass("disabled");
+		}
 	},
 	changePhase: function(phase){
 		console.log("Phase changed: "+phase);
@@ -428,6 +449,8 @@ var kbw = {
 			);
 	},
 	getBack: function  () {
+		kbw.pause = false;
+		kbw.enableDisableControls();
 		switch(kbw.phase){
 			case 1:
 				kbw.getBackPhase1();
@@ -517,14 +540,17 @@ var kbw = {
 	pausePhase: function(){
 		if(kbw.pause){
 			kbw.pause = false;
-			kbw.getBackPhase2();
-		}else
+			kbw.enableDisableControls();
+			kbw.getBack();
+		}else{			
 			kbw.pause = true;
+			kbw.enableDisableControls();
+		}
+
 	},
 	getBackPhase2: function(){
 		if(kbw.pause)
 		{
-			debugger;
 			return;
 		}
 		if(kbw.kibusInHome()){
