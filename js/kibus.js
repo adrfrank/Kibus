@@ -174,7 +174,7 @@ var kbw = {
 	cols:50,
 	rows:30,	
 	squareBase: 16,
-	phase: 2,
+	phase: 3,
 	isPlaying: false,
 	assets: {},
 	houseCoords: {x:1,y:1},
@@ -182,6 +182,9 @@ var kbw = {
 	backgroundMatrix: [],
 	obstacleMatrix: [],
 	flags: {},
+	heat: {},
+	calculateHeat: true,
+	maxHeat: 200,
 	flagsForObstacle:3,
 	isDown: false,
 	kibus: null,
@@ -210,6 +213,9 @@ var kbw = {
 		    switch(tool){
 		    	case "house":
 		    		kbw.setHouse(x,y);
+		    		if(kbw.calculateHeat == true){
+		    			kbw.fillHeat();
+		    		}
 		    		if(kbw.moveKibusWithHouse ==true)
 		    		{
 		    			kbw.kibus.setCoord(x,y);
@@ -249,6 +255,9 @@ var kbw = {
 		    switch(tool){
 		    	case "house":
 		    		kbw.setHouse(x,y);
+		    		if(kbw.calculateHeat == true){
+		    			kbw.fillHeat();
+		    		}
 	    			if(kbw.moveKibusWithHouse == true)
 	    				kbw.kibus.setCoord(x,y);
 		    		break;
@@ -333,12 +342,15 @@ var kbw = {
 			repaint: kbw.repaint,
 			parent: kbw
 		});
-
 		this.flagsForObstacle = 3;
 		this.flags = {};
+		this.heat = {};
 		this.loadBackground();
 		this.initObstacleMatrix();
 		this.drawHouse();		
+		if(kbw.calculateHeat == true){
+			kbw.fillHeat();
+		}
 		this.kibus.render();
 		kbw.enableDisableControls();
 	},
@@ -368,6 +380,7 @@ var kbw = {
 		kbw.keysEnabled = false;
 		kbw.moveKibusWithHouse = false;
 		kbw.evaluateFlags = true;
+		kbw.calculateHeat = false;
 		switch(kbw.phase){
 			case 1:
 				kbw.keysEnabled = true;
@@ -376,6 +389,10 @@ var kbw = {
 				break;
 			case 2: 
 
+				break;
+			case 3:
+				kbw.evaluateFlags = false;
+				kbw.calculateHeat = true;
 				break;
 		}		
 	},
@@ -458,6 +475,9 @@ var kbw = {
 			case 2: 
 				kbw.getBackPhase2();
 				break;
+			case 3:
+				kbw.getBackPhase3();
+				break;
 		}
 	},
 	getBackPhase1:function(){
@@ -469,6 +489,101 @@ var kbw = {
 			setTimeout(kbw.getBackPhase1,kbw.sleepTime);
 		}
 	},	
+	getBackPhase3: function(){
+		if(kbw.pause)
+		{
+			return;
+		}
+		if(kbw.kibusInHome()){
+			kbw.bees = [];
+			kbw.c = null;			
+			return;
+		}else {		
+			kbw.phase3Step();
+			setTimeout(kbw.getBackPhase3,kbw.sleepTime);
+		}
+
+	},
+	phase3Step:function(){
+		if(!kbw.iteration) kbw.iteration =0;
+		if(kbw.iteration < 5){
+			if(kbw.iteration == 0){
+				kbw.dy = [-1,-1,-1, 0,0, 1,1,1];
+				kbw.dx = [-1, 0, 1,-1,1,-1,0,1];				
+				kbw.movements= [];
+				kbw.c = {x:kbw.kibus.x,y:kbw.kibus.y};
+			}
+			if(kbw.bees)
+				for(var i in kbw.bees){			
+					kbw.repaint(kbw.bees[i].x, kbw.bees[i].y)
+				}
+			kbw.bees = [];
+			for(var i=0; i < 5;++i){
+				var n={};
+				do{
+					var x= parseInt(Math.random()*8);
+					n = {
+						x: kbw.c.x +kbw.dx[x],
+						y: kbw.c.y +kbw.dy[x],
+					}
+				}while(n.x<0,n.x>=kbw.cols,n.y<0,n.y>=kbw.rows, kbw.obstacleOnCoord(n.x,n.y));
+				kbw.bees.push(n);				
+			}
+			var bestHeat=-999;
+			for(var i in kbw.bees){
+				kbw.imageOn('pointer',kbw.bees[i].x, kbw.bees[i].y);
+				if(kbw.heat[kbw.bees[i].x+','+kbw.bees[i].y] > bestHeat){
+					bestHeat = kbw.heat[kbw.bees[i].x+','+kbw.bees[i].y];
+					kbw.c = kbw.bees[i];
+				}
+				if(kbw.bees[i].x == kbw.houseCoords.x && kbw.bees[i].y == kbw.houseCoords.y){
+					kbw.iteration = 5;
+					kbw.movements.push(kbw.bees[i]);
+					return;
+				}
+			}
+			kbw.movements.push(kbw.c);
+			kbw.kibus.render();			
+			kbw.iteration++;
+		}else{
+			if(kbw.movements.length>0){
+				kbw.kibus.setCoord(kbw.movements[0].x,kbw.movements[0].y);
+				kbw.kibus.render();
+				kbw.movements.splice(0,1);
+			}else{
+				kbw.iteration =0;
+			}		
+			
+		}
+		
+		
+
+	},
+	fillHeat: function(){
+		var dy = [-1,-1,-1,0,0,1,1,1];
+		var dx = [-1,0,1,-1,1,-1,0,1];
+		visited = {};
+		kbw.heat[kbw.houseCoords.x+','+kbw.houseCoords.y] = kbw.maxHeat;
+		queue = [];
+		queue.push(kbw.houseCoords);
+		while(queue.length > 0){
+			var c =  queue[0];
+			queue.splice(0,1);
+			for(var i=0; i < 8;++i){
+				var n = {
+					x: c.x +dx[i],
+					y: c.y +dy[i],
+				}
+				if(n.x>=0 && n.x < kbw.cols && n.y>=0 && n.y < kbw.rows && !kbw.obstacleOnCoord(n.x,n.y) && !visited[n.x+','+n.y] ){
+					visited[n.x+','+n.y] = true;
+					kbw.heat[n.x+','+n.y] = kbw.heat[c.x+','+c.y]-1;
+					queue.push(n);
+				}
+			}
+
+		}
+		console.log("Heat generated");
+	},
 	setFlag:function(n){
 		if(!n)n=1
 		if(!kbw.flags[kbw.kibus.x+","+kbw.kibus.y])
