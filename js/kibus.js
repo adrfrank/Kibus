@@ -345,6 +345,7 @@ var kbw = {
 		this.flagsForObstacle = 3;
 		this.flags = {};
 		this.heat = {};
+		this.bees = [];
 		this.loadBackground();
 		this.initObstacleMatrix();
 		this.drawHouse();		
@@ -506,45 +507,98 @@ var kbw = {
 	},
 	phase3Step:function(){
 		if(!kbw.iteration) kbw.iteration =0;
-		if(kbw.iteration < 5){
+		if(kbw.iteration <= 5){
 			if(kbw.iteration == 0){
 				kbw.dy = [-1,-1,-1, 0,0, 1,1,1];
 				kbw.dx = [-1, 0, 1,-1,1,-1,0,1];				
 				kbw.movements= [];
 				kbw.c = {x:kbw.kibus.x,y:kbw.kibus.y};
+				kbw.prop = false;
+				kbw.retroprop = false;
+				kbw.propCount = 0;
+				kbw.retropropCount =0;
+				kbw.bees = [[],[],[],[],[]];
 			}
-			if(kbw.bees)
-				for(var i in kbw.bees){			
-					kbw.repaint(kbw.bees[i].x, kbw.bees[i].y)
+			if(!kbw.prop&& !kbw.retroprop){
+				for(var i=0; i < 5;++i){
+					var n={};
+					do{
+						if(kbw.iteration > 0){
+							kbw.c = kbw.bees[i][kbw.iteration-1];
+						}
+						var x= parseInt(Math.random()*8);
+						n = {
+							x: kbw.c.x +kbw.dx[x],
+							y: kbw.c.y +kbw.dy[x],
+						}
+					}while(n.x<0||n.x>=kbw.cols||n.y<0||n.y>=kbw.rows|| kbw.obstacleOnCoord(n.x,n.y));
+					kbw.bees[i].push(n);	
+					
+
 				}
-			kbw.bees = [];
-			for(var i=0; i < 5;++i){
-				var n={};
-				do{
-					var x= parseInt(Math.random()*8);
-					n = {
-						x: kbw.c.x +kbw.dx[x],
-						y: kbw.c.y +kbw.dy[x],
+				//verify home
+				for(var i in kbw.bees){
+					for(var j in kbw.bees[i]){
+						var bc =  kbw.bees[i][j];
+						if(bc.x == kbw.houseCoords.x && bc.y == kbw.houseCoords.y){
+							kbw.iteration = 6;
+							kbw.movements = jQuery.extend([],kbw.bees[i]);
+							return;
+						}
 					}
-				}while(n.x<0,n.x>=kbw.cols,n.y<0,n.y>=kbw.rows, kbw.obstacleOnCoord(n.x,n.y));
-				kbw.bees.push(n);				
-			}
-			var bestHeat=-999;
-			for(var i in kbw.bees){
-				kbw.imageOn('pointer',kbw.bees[i].x, kbw.bees[i].y);
-				if(kbw.heat[kbw.bees[i].x+','+kbw.bees[i].y] > bestHeat){
-					bestHeat = kbw.heat[kbw.bees[i].x+','+kbw.bees[i].y];
-					kbw.c = kbw.bees[i];
+				}	
+				kbw.prop = true;
+				kbw.iteration ++;
+				kbw.retropropCount = kbw.iteration;
+				kbw.propCount = 0;
+				kbw.kibus.render();
+			}else if(kbw.prop&& !kbw.retroprop){
+				for(var i in kbw.bees){
+					var bee = kbw.bees[i][kbw.propCount];
+					if(kbw.propCount>0)
+						kbw.repaint(kbw.bees[i][kbw.propCount-1].x,kbw.bees[i][kbw.propCount-1].y);
+					kbw.imageOn('pointer',bee.x,bee.y);
+					kbw.kibus.render();
 				}
-				if(kbw.bees[i].x == kbw.houseCoords.x && kbw.bees[i].y == kbw.houseCoords.y){
-					kbw.iteration = 5;
-					kbw.movements.push(kbw.bees[i]);
-					return;
+				
+				kbw.propCount ++;
+				if(kbw.propCount == kbw.iteration){
+					kbw.retroprop=true;
 				}
-			}
-			kbw.movements.push(kbw.c);
-			kbw.kibus.render();			
-			kbw.iteration++;
+			}else if(kbw.prop&& kbw.retroprop){
+				for(var i in kbw.bees){
+					var bee = kbw.bees[i][kbw.retropropCount-1];
+					kbw.repaint(bee.x,bee.y);
+					if(kbw.retropropCount>1){
+						bee = kbw.bees[i][kbw.retropropCount-2]
+						kbw.imageOn('pointer',bee.x,bee.y);
+					}
+					kbw.kibus.render();
+				}
+				kbw.retropropCount --;
+				if(kbw.retropropCount==0){
+					kbw.prop = false;
+					kbw.retroprop = false;	
+					//debugger;
+					//get best bee
+					var bestbee = [];
+					var bestHeat=-999;
+					for(var i in kbw.bees){
+						var bee = kbw.bees[i];
+						if(kbw.heat[bee[kbw.iteration-1].x+','+bee[kbw.iteration-1].y]==bestHeat){
+							bestbee.push(jQuery.extend({}, bee));							
+						}else if(kbw.heat[bee[kbw.iteration-1].x+','+bee[kbw.iteration-1].y]>bestHeat){
+							bestbee = [jQuery.extend({}, bee)];
+							bestHeat = kbw.heat[bee[kbw.iteration-1].x+','+bee[kbw.iteration-1].y]
+						}
+					}
+					kbw.movements = jQuery.extend([], bestbee[parseInt(Math.random()*bestbee.length)]) ;
+					for(var i in kbw.bees){
+						kbw.bees[i] = jQuery.extend([], bestbee[parseInt(Math.random()*bestbee.length)]);
+					}
+
+				}
+			}			
 		}else{
 			if(kbw.movements.length>0){
 				kbw.kibus.setCoord(kbw.movements[0].x,kbw.movements[0].y);
@@ -562,6 +616,8 @@ var kbw = {
 	fillHeat: function(){
 		var dy = [-1,-1,-1,0,0,1,1,1];
 		var dx = [-1,0,1,-1,1,-1,0,1];
+		kbw.iteration =0;
+		kbw.movements= [];
 		visited = {};
 		kbw.heat[kbw.houseCoords.x+','+kbw.houseCoords.y] = kbw.maxHeat;
 		queue = [];
@@ -574,7 +630,7 @@ var kbw = {
 					x: c.x +dx[i],
 					y: c.y +dy[i],
 				}
-				if(n.x>=0 && n.x < kbw.cols && n.y>=0 && n.y < kbw.rows && !kbw.obstacleOnCoord(n.x,n.y) && !visited[n.x+','+n.y] ){
+				if(n.x>=0 && n.x < kbw.cols && n.y>=0 && n.y < kbw.rows  && !visited[n.x+','+n.y] ){
 					visited[n.x+','+n.y] = true;
 					kbw.heat[n.x+','+n.y] = kbw.heat[c.x+','+c.y]-1;
 					queue.push(n);
@@ -834,6 +890,7 @@ var kbw = {
 				}
 			}
 			kbw.setHouse(parseInt(map.house.x), parseInt(map.house.y));
+			kbw.fillHeat();
 			kbw.kibus.setCoord(parseInt(map.kibus.x), parseInt( map.kibus.y));
 			kbw.kibus.render();			
 			$("#maps-modal").modal("hide");
