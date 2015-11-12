@@ -849,9 +849,17 @@ var kbw = {
 			kbw.setObstacle(rx,ry);
 		}
 		kbw.drawHouse();
+		if(kbw.renderHeat){
+			for(var i=0; i < kbw.cols; ++i){
+				for(var j=0; j < kbw.rows; ++j){
+					kbw.drawHeat(i,j);
+				}
+			}
+		}
 		kbw.kibus.setCoord(kbw.houseCoords.x,kbw.houseCoords.y);
 		kbw.kibus.movements = [];
 		kbw.kibus.render();
+
 	},
 	clearOn: function  (x,y) {
 		if(x<0||x>kbw.cols||y<0||y>kbw.rows) return;
