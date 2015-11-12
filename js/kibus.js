@@ -184,7 +184,7 @@ var kbw = {
 	flags: {},
 	heat: {},
 	calculateHeat: true,
-	maxHeat: 200,
+	maxHeat: 50,
 	flagsForObstacle:3,
 	isDown: false,
 	kibus: null,
@@ -192,8 +192,9 @@ var kbw = {
 	evaluateFlags: true,
 	keysEnabled: false,
 	moveKibusWithHouse: false,
+	renderHeat: true,
 	pause :true,
-	nit:10,
+	nit:3,
 	testCtx: function(){
 		this.ctx.moveTo(0,0);
 		this.ctx.lineTo(200,100);
@@ -383,6 +384,7 @@ var kbw = {
 		kbw.moveKibusWithHouse = false;
 		kbw.evaluateFlags = true;
 		kbw.calculateHeat = false;
+		kbw.renderHeat = false;
 		switch(kbw.phase){
 			case 1:
 				kbw.keysEnabled = true;
@@ -395,6 +397,7 @@ var kbw = {
 			case 3:
 				kbw.evaluateFlags = false;
 				kbw.calculateHeat = true;
+				kbw.renderHeat = true;
 				break;
 		}		
 	},
@@ -421,6 +424,7 @@ var kbw = {
 		kbw.load('pointer');
 		kbw.load('cave');
 		kbw.load('girl');
+		kbw.load('bee');
 	},
 	initObstacleMatrix: function(){
 		for(var i=0; i < kbw.cols; ++i){
@@ -572,7 +576,7 @@ var kbw = {
 					var bee = kbw.bees[i][kbw.propCount];
 					if(kbw.propCount>0)
 						kbw.repaint(kbw.bees[i][kbw.propCount-1].x,kbw.bees[i][kbw.propCount-1].y);
-					kbw.imageOn('pointer',bee.x,bee.y);
+					kbw.imageOn('bee',bee.x,bee.y);
 					kbw.kibus.render();
 				}
 				
@@ -586,7 +590,7 @@ var kbw = {
 					kbw.repaint(bee.x,bee.y);
 					if(kbw.retropropCount>1){
 						bee = kbw.bees[i][kbw.retropropCount-2]
-						kbw.imageOn('pointer',bee.x,bee.y);
+						kbw.imageOn('bee',bee.x,bee.y);
 					}
 					kbw.kibus.render();
 				}
@@ -655,6 +659,7 @@ var kbw = {
 				if(n.x>=0 && n.x < kbw.cols && n.y>=0 && n.y < kbw.rows  && !visited[n.x+','+n.y] ){
 					visited[n.x+','+n.y] = true;
 					kbw.heat[n.x+','+n.y] = kbw.heat[c.x+','+c.y]-1;
+					kbw.repaint(n.x,n.y);
 					queue.push(n);
 				}
 			}
@@ -795,12 +800,16 @@ var kbw = {
 		kbw.imageOn('cave',x,y);
 		//kbw.imageOn('houseCenterTop',x,y-1);
 		for(var i=x-1; i<=x+1;++i){
-			for(var j=y-1; j <= y+1; ++j)
+			for(var j=y-1; j <= y+1; ++j){
 				if(i>=0 && j>=0 && i < kbw.cols && j < kbw.rows){
-					if(kbw.obstacleMatrix[i][j] == true)
-						kbw.imageOn('rock',i,j);
+					if(kbw.obstacleMatrix[i][j] == true){
+						kbw.imageOn('rock',i,j);						
+					}
 				}
+				kbw.drawHeat(i,j);
+			}
 		}
+
 	},
 	setObstacle: function function_name (x,y) {
 		if(x<0||x>kbw.cols||y<0||y>kbw.rows) return;
@@ -866,7 +875,16 @@ var kbw = {
 			kbw.imageOn('rock',x,y);
 		if(kbw.flags[x+","+y] >= kbw.flagsForObstacle)
 			kbw.imageOn('bg5',x,y);
+		kbw.drawHeat(x,y);
 		//kbw.kibus.render();
+	},
+	drawHeat: function(x,y){
+		if(kbw.renderHeat){
+			var heat = kbw.heat[x+','+y] / kbw.maxHeat * 0.6;
+			var color = 'rgba(255,0,0,'+heat+')';
+			kbw.ctx.fillStyle = color;
+			kbw.ctx.fillRect(x*kbw.squareBase,y*kbw.squareBase,kbw.squareBase,kbw.squareBase);
+		}
 	},
 	saveMap: function(){
 		
