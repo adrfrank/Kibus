@@ -193,6 +193,7 @@ var kbw = {
 	keysEnabled: false,
 	moveKibusWithHouse: false,
 	pause :true,
+	nit:10,
 	testCtx: function(){
 		this.ctx.moveTo(0,0);
 		this.ctx.lineTo(200,100);
@@ -532,9 +533,7 @@ var kbw = {
 							y: kbw.c.y +kbw.dy[x],
 						}
 					}while(n.x<0||n.x>=kbw.cols||n.y<0||n.y>=kbw.rows|| kbw.obstacleOnCoord(n.x,n.y));
-					kbw.bees[i].push(n);	
-					
-
+					kbw.bees[i].push(n);
 				}
 				//verify home
 				for(var i in kbw.bees){
@@ -547,6 +546,22 @@ var kbw = {
 						}
 					}
 				}	
+
+				//compare last position
+				for(var i in kbw.bees){
+					var eq=false;
+					var last = kbw.bees[i][kbw.bees[i].length-1];
+					for(var j=0; j < kbw.bees[i].length-1; ++j){
+						if(kbw.bees[i][j].x == last.x && kbw.bees[i][j].y == last.y){
+							kbw.heat[ kbw.bees[i][j].x+','+kbw.bees[i][j].y ] -= kbw.nit;
+							kbw.heat[ last.x+','+last.y ] -= kbw.nit;
+							eq = true;
+							break;
+						}
+					}
+					if(eq) break;
+				}
+
 				kbw.prop = true;
 				kbw.iteration ++;
 				kbw.retropropCount = kbw.iteration;
@@ -586,7 +601,14 @@ var kbw = {
 					for(var i in kbw.bees){
 						var bee = kbw.bees[i];
 						if(kbw.heat[bee[kbw.iteration-1].x+','+bee[kbw.iteration-1].y]==bestHeat){
-							bestbee.push(jQuery.extend({}, bee));							
+							var exist = false;
+							for(var j in bestbee){
+								if(bestbee[j][kbw.iteration-1].x ==  bee[kbw.iteration-1].x 
+									&&bestbee[j][kbw.iteration-1].y ==  bee[kbw.iteration-1].y)
+								{exist = true; break;}
+							}
+							if(!exist)
+								bestbee.push(jQuery.extend({}, bee));							
 						}else if(kbw.heat[bee[kbw.iteration-1].x+','+bee[kbw.iteration-1].y]>bestHeat){
 							bestbee = [jQuery.extend({}, bee)];
 							bestHeat = kbw.heat[bee[kbw.iteration-1].x+','+bee[kbw.iteration-1].y]
