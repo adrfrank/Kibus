@@ -194,7 +194,7 @@ var kbw = {
 	moveKibusWithHouse: false,
 	renderHeat: true,
 	pause :true,
-	nit:3,
+	nit:5,
 	testCtx: function(){
 		this.ctx.moveTo(0,0);
 		this.ctx.lineTo(200,100);
@@ -524,6 +524,7 @@ var kbw = {
 				kbw.retropropCount =0;
 				kbw.bees = [[],[],[],[],[]];
 			}
+			var cont =10, cont2=10;
 			if(!kbw.prop&& !kbw.retroprop){
 				for(var i=0; i < 5;++i){
 					var n={};
@@ -536,10 +537,13 @@ var kbw = {
 							x: kbw.c.x +kbw.dx[x],
 							y: kbw.c.y +kbw.dy[x],
 						}
+						var seclast = kbw.bees[i][kbw.iteration-2];
+						if(seclast&& seclast.x == n.x && seclast.y == n.y&& cont-- > 0 )continue;
+						if(n.x == kbw.kibus.x && n.y == kbw.kibus.y&&cont2-- > 0 ) continue;
 					}while(n.x<0||n.x>=kbw.cols||n.y<0||n.y>=kbw.rows|| kbw.obstacleOnCoord(n.x,n.y));
 					kbw.bees[i].push(n);
 				}
-				//verify home
+				//verify if a bee is in home
 				for(var i in kbw.bees){
 					for(var j in kbw.bees[i]){
 						var bc =  kbw.bees[i][j];
@@ -552,13 +556,16 @@ var kbw = {
 				}	
 
 				//compare last position
+				if(kbw.iteration>1)
 				for(var i in kbw.bees){
 					var eq=false;
 					var last = kbw.bees[i][kbw.bees[i].length-1];
 					for(var j=0; j < kbw.bees[i].length-1; ++j){
 						if(kbw.bees[i][j].x == last.x && kbw.bees[i][j].y == last.y){
-							kbw.heat[ kbw.bees[i][j].x+','+kbw.bees[i][j].y ] -= kbw.nit;
-							kbw.heat[ last.x+','+last.y ] -= kbw.nit;
+							//kbw.heat[ kbw.bees[i][j].x+','+kbw.bees[i][j].y ] -= kbw.nit;
+							//kbw.heat[ last.x+','+last.y ] -= kbw.nit;
+							var b = kbw.bees[i][kbw.bees[i].length-2];
+							kbw.heat[ b.x+','+b.y ] -= kbw.nit;
 							eq = true;
 							break;
 						}
